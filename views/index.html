@@ -20,12 +20,9 @@
     <main class="container" role="main">
         <div class="row">
             <div class="input-group m-3">
-                <input type="text" class="form-control js-postal-code" placeholder="Postal Code" aria-label="Postal Code" aria-describedby="search">
-                <div class="input-group-append">
-                    <button class="btn btn-primary" type="button" id="search">Search</button>
-                </div>
+                <input type="number" name="postal-code" class="form-control" placeholder="Postal Code">
             </div>
-            <div class="alert alert-danger sr-only m-auto js-message" role="alert"></div>
+            <div id="message" class="alert sr-only m-auto" role="alert"></div>
         </div>
 
         <div class="row">
@@ -35,7 +32,7 @@
             </div>
             <div class="col-md-4 col-sm-12">
                 <h3>List</h3>
-                <ul class="list-group js-list"></ul>
+                <ul id="list" class="list-group"></ul>
             </div>
         </div>
     </main>

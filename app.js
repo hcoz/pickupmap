@@ -27,18 +27,13 @@ app.get('/pickuplist', (req, res, next) => {
 
     axios.get('https://api.bring.com/pickuppoint/api/pickuppoint/DK/postalCode/' + postalCode + '.json')
         .then((response) => {
-            if (response.data.pickupPoint.length > 0) {
-                let pickupList = response.data.pickupPoint.map((item) => { 
-                    return { id: item.id, name: item.name, lat: item.latitude, lng: item.longitude}; 
-                });
-                // add new list to cache
-                memCache.set(postalCode, pickupList);
-                res.status(200).send({ data: pickupList });
-                return next();
-            } else {
-                res.status(400).send({ message: 'No result is found'});
-                return next();
-            }
+            let pickupList = response.data.pickupPoint.map((item) => { 
+                return { id: item.id, name: item.name, lat: item.latitude, lng: item.longitude}; 
+            });
+            // add new list to cache
+            memCache.set(postalCode, pickupList);
+            res.status(200).send({ data: pickupList });
+            return next();
         })
         .catch((err) => {
             console.error(err);

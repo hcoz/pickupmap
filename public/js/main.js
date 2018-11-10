@@ -30,32 +30,40 @@ function renderList(data) {
             '<br> Latitude: ' + data[i]['lat'] +
             '<br> Longitude: ' + data[i]['lng'] + '</li>';
     }
-
-    $('.js-list').empty().append(htmlStr);
+    // append the new list
+    $('#list').empty().append(htmlStr);
 }
 
 $(function () {
-    $('#search').click(function () {
-        var postalCode = $('.js-postal-code').val();
-        if (!postalCode) {
-            $('.js-message').removeClass('sr-only').text('You must enter a postal code');
+    $('input[name="postal-code"]').on('keyup', function () {
+        var postalCode = $('input[name="postal-code"]').val();
+        // check if input length equals 4, else show an info message
+        if (postalCode.length === 4) {
+            $.get('/pickuplist', { postalCode: postalCode })
+                .done(function (res) {
+                    if (res.data.length > 0) {
+                        $('#message').empty().removeClass('sr-only alert-danger').addClass('alert-info').text('Pickup Points for Postal Code: ' + postalCode);
+                        renderList(res.data);
+                        initMap(res.data);
+                    } else {
+                        // if there is no pickup point show an error message
+                        $('#message').empty().removeClass('sr-only alert-info').addClass('alert-danger').text('No result is found for Postal Code: ' + postalCode);
+                        // remove the data of previous request
+                        $('#list').empty();
+                        $('#map').empty();
+                    }
+                })
+                .fail(function (err) {
+                    $('#message').empty().removeClass('sr-only alert-info').addClass('alert-danger').text(err.responseJSON.message);
+                    // remove the data of previous request
+                    $('#list').empty();
+                    $('#map').empty();
+                });
+        } else {
+            $('#message').empty().removeClass('sr-only alert-danger').addClass('alert-info').text('Postal Code must be a 4 digit number');
             // remove the data of previous request
-            $('.js-list').empty();
+            $('#list').empty();
             $('#map').empty();
-            return;
         }
-
-        $.get('/pickuplist', { postalCode: postalCode })
-            .done(function (res) {
-                $('.js-message').addClass('sr-only').empty();
-                renderList(res.data);
-                initMap(res.data);
-            })
-            .fail(function (err) {
-                $('.js-message').empty().removeClass('sr-only').text(err.responseJSON.message);
-                // remove the data of previous request
-                $('.js-list').empty();
-                $('#map').empty();
-            });
     });
 });
