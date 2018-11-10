@@ -29,7 +29,7 @@ app.get('/pickuplist', (req, res, next) => {
         .then((response) => {
             if (response.data.pickupPoint.length > 0) {
                 let pickupList = response.data.pickupPoint.map((item) => { 
-                    return { id: item.id, name: item.name, latitude: item.latitude, longitude: item.longitude}; 
+                    return { id: item.id, name: item.name, lat: item.latitude, lng: item.longitude}; 
                 });
                 // add new list to cache
                 memCache.set(postalCode, pickupList);
