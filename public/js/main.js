@@ -1,3 +1,12 @@
+// render map in the page
+var map;
+function initMap(data) {
+    map = new google.maps.Map(document.getElementById('map'), {
+        center: { lat: -34.397, lng: 150.644 },
+        zoom: 8
+    });
+}
+
 $(function () {
     // render list in the page
     function renderList(data) {
@@ -10,11 +19,6 @@ $(function () {
         }
 
         $('.js-list').empty().append(htmlStr);
-    }
-
-    // render map in the page
-    function renderMap(data) {
-        
     }
 
     $('#search').click(function () {
@@ -31,6 +35,7 @@ $(function () {
                 $('.js-message').addClass('sr-only').empty();
                 console.log(res);
                 renderList(res.data);
+                initMap(data);
             })
             .fail(function (err) {
                 $('.js-message').empty().removeClass('sr-only').text(err.responseJSON.message);
