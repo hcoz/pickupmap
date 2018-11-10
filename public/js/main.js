@@ -1,34 +1,40 @@
 // render map in the page
 var map;
 function initMap(data) {
-    map = new google.maps.Map(document.getElementById('map'), {
-        center: { lat: data[0]['lat'], lng: data[0]['lng'] },
-        zoom: 13
-    });
+    var bound = new google.maps.LatLngBounds();
+    map = new google.maps.Map(document.getElementById('map'));
 
-    data.map(function (location) {
-        return new google.maps.Marker({
-            position: { lat: location.lat, lng: location.lng},
-            label: location.name,
+    for (var i = 0; i < data.length; i++) {
+        var lat = parseFloat(data[i]['lat']);
+        var lng = parseFloat(data[i]['lng']);
+
+        bound.extend(new google.maps.LatLng(lat, lng));
+        // create markers for pickup points
+        new google.maps.Marker({
+            position: { lat: lat, lng: lng },
+            label: data[i]['name'],
             map: map
         });
-    });
+    }
+    // adjust center and bounds of the map
+    map.setCenter(bound.getCenter());
+    map.fitBounds(bound);
+}
+
+// render list in the page
+function renderList(data) {
+    var htmlStr = '';
+
+    for (var i = 0; i < data.length; i++) {
+        htmlStr += '<li class="list-group-item" data-id="' + data[i]['id'] + '">' + data[i]['name'] +
+            '<br> Latitude: ' + data[i]['lat'] +
+            '<br> Longitude: ' + data[i]['lng'] + '</li>';
+    }
+
+    $('.js-list').empty().append(htmlStr);
 }
 
 $(function () {
-    // render list in the page
-    function renderList(data) {
-        var htmlStr = '';
-
-        for (var i = 0; i < data.length; i++) {
-            htmlStr += '<li class="list-group-item" data-id="' + data[i]['id'] + '">' + data[i]['name'] + 
-                '<br> Latitude: ' + data[i]['lat'] + 
-                '<br> Longitude: ' + data[i]['lng'] + '</li>';
-        }
-
-        $('.js-list').empty().append(htmlStr);
-    }
-
     $('#search').click(function () {
         var postalCode = $('.js-postal-code').val();
         if (!postalCode) {
@@ -42,7 +48,6 @@ $(function () {
         $.get('/pickuplist', { postalCode: postalCode })
             .done(function (res) {
                 $('.js-message').addClass('sr-only').empty();
-                console.log(res);
                 renderList(res.data);
                 initMap(res.data);
             })
