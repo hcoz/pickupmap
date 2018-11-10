@@ -6,7 +6,7 @@
 
 3. go to 'localhost:8080' address in browser
 
-4. enter postal code to input field and click search
+4. enter a postal code to input field
 
 ## Notes
 - Postal Code checks added for 4 digit number in client side, because the API is required such a postal code parameter.
